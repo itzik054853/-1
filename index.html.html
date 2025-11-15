@@ -140,7 +140,7 @@ const ADMIN_PASSWORD = "1234";
   ממוינת לפי הסדר: 1) קורסים, 2) אתרי תוכן, 3) שיעורי תורה.
   לא נוגעים בשום דבר חוץ מהנתונים עצמם.
 */
-let links = JSON.parse(localStorage.getItem('links')) || [
+let links = [
   /* ===== 1) קורסים ללימוד הלכה ===== */
   {
     "title": "קורס פוסק לביתו - הרב אהרן דואר",
@@ -557,6 +557,31 @@ function exportUpdatedHTML() {
 
   alert("✔ הקובץ החדש מוכן! הורדנו אותו למחשב שלך.");
 }
+function exportUpdatedHTML() {
+  // ממיר את המערך המעודכן
+  const newLinksJson = JSON.stringify(links, null, 2);
+
+  // לוקח את כל הדף כמו שהוא כרגע
+  const fullHtml = document.documentElement.outerHTML;
+
+  // מחפש ומחליף את מערך links בקוד
+  const updatedHtml = fullHtml.replace(
+    /let\s+links\s*=\s*\[[\s\S]*?\];/,
+    "let links = " + newLinksJson + ";"
+  );
+
+  // יוצר קובץ HTML חדש
+  const blob = new Blob([updatedHtml], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "portal_updated.html";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  alert("✔ קובץ HTML חדש נוצר וירד למחשב — כולל כל העדכונים!");
+}
 
 </script>
 
@@ -589,6 +614,7 @@ function exportUpdatedHTML() {
 
 </body>
 </html>
+
 
 
 
